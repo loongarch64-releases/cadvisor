@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euo pipefail
+set -exuo pipefail
 
 UPSTREAM_OWNER=google
 UPSTREAM_REPO=cadvisor
@@ -12,6 +12,12 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(dirname "$SCRIPT_DIR")"
 DISTS="${ROOT_DIR}/dists"
 SRCS="${ROOT_DIR}/srcs"
+
+# ======================================================================
+
+PATCHES="${ROOT_DIR}/patches"
+BUILD_DIR="${SRCS}/${VERSION}"
+DIST_DIR="${DISTS}/${VERSION}"
 
 mkdir -p "${DISTS}/${VERSION}" "${SRCS}"
 
@@ -30,6 +36,9 @@ prepare()
     # 例如：apt-get update && apt-get install -y build-essential
     # 例如：git clone -b ${VERSION} --depth=1 https://github.com/google/cadvisor ${SRCS}/${VERSION}
     # 例如：patch -p1 < patches/loongarch-fix.patch
+    rm -rf ${SRCS}/${VERSION}
+    git clone -b ${VERSION} --depth=1 https://github.com/google/cadvisor ${SRCS}/${VERSION}
+    
     
     echo "✅ [Prepare] Environment ready."
 }
@@ -42,7 +51,11 @@ build()
     # TODO: 在此处添加编译命令
     # 例如：make -j$(nproc) ARCH=loongarch64
     # 例如：cmake -DCMAKE_BUILD_TYPE=Release .. && make
-    
+    (
+        cd ${BUILD_DIR}
+        git apply ${PATCHES}/*.patch
+        make
+    )
 
     echo "✅ [Build] Compilation finished."
 }
@@ -52,10 +65,8 @@ post_build()
 {
     echo "📦 [Post-Build] Organizing artifacts..."
     
-    # TODO: 在此处添加整理命令
-    # 例如：mkdir -p dists && cp binary dist/
-    # 例如：strip dist/binary
-    
+    cp -a ${BUILD_DIR}/_output/* $DIST_DIR/ 
+
     echo "✅ [Post-Build] Artifacts ready in ./dists/${VERSION}."
 }
 

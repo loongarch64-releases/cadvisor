@@ -3,7 +3,7 @@
 # -e: 命令失败即退出
 # -u: 引用未定义变量即退出 (关键！)
 # -o pipefail: 管道失败即退出
-set -euo pipefail
+set -euxo pipefail
 
 UPSTREAM_OWNER=google
 UPSTREAM_REPO=cadvisor
@@ -29,7 +29,6 @@ fi
 
 echo "🔨 Building Docker image: ${DOCKER_IMAGE_NAME} ..."
 docker build \
-    --platoform "${PLATFORM}" \
     -f "${DOCKERFILE_PATH}" \
     -t "${DOCKER_IMAGE_NAME}" \
     "${ROOT_DIR}"

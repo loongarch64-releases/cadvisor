@@ -6,12 +6,13 @@ UPSTREAM_REPO=cadvisor
 VERSION="${1}"
 echo "   🏢 Org:   ${UPSTREAM_OWNER}"
 echo "   📦 Proj:  ${UPSTREAM_REPO}"
-echo "   🏷️  Ver:   ${VERSION}"
+echo "   🏷️ Ver:   ${VERSION}"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(dirname "$SCRIPT_DIR")"
 DISTS="${ROOT_DIR}/dists"
 
+# 校验
 if [ ! -d "${DISTS}/${VERSION}" ]; then
     echo "❌ Error: Distribution directory for version ${VERSION} does not exist."
     echo "Please run build.sh ${VERSION} first."
