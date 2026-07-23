@@ -36,6 +36,7 @@ docker build \
 echo "🏃 Running build inside container..."
 
 docker run --rm \
+    --user "$(id -u):$(id -g)" \
     --platform "${PLATFORM}" \
     -v "${ROOT_DIR}:/src:z" \
     -w /src \
